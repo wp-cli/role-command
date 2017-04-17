@@ -1,7 +1,7 @@
 wp-cli/role-command
 ===================
 
-Manage roles and capabilities.
+Manage user roles and capabilities.
 
 [![Build Status](https://travis-ci.org/wp-cli/role-command.svg?branch=master)](https://travis-ci.org/wp-cli/role-command)
 
