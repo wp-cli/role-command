@@ -371,5 +371,3 @@ class Role_Command extends WP_CLI_Command {
 			WP_CLI::error( "Role definitions are not persistent." );
 	}
 }
-
-WP_CLI::add_command( 'role', 'Role_Command' );
