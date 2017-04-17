@@ -1,6 +1,6 @@
 {
     "name": "wp-cli/role-command",
-    "description": "Manage roles and capabilities.",
+    "description": "Manage user roles and capabilities.",
     "type": "wp-cli-package",
     "homepage": "https://github.com/wp-cli/role-command",
     "support": {
