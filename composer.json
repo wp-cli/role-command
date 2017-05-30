@@ -20,7 +20,9 @@
         "psr-4": {
             "": "src/"
         },
-        "files": [ "role-command.php" ]
+        "files": [
+            "role-command.php"
+        ]
     },
     "require": {},
     "require-dev": {
@@ -40,6 +42,7 @@
             "cap add",
             "cap list",
             "cap remove"
-        ]
+        ],
+        "bundled": true
     }
 }
