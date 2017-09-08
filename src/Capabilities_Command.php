@@ -1,7 +1,9 @@
 <?php
 
 /**
- * Manage user capabilities.
+ * Adds, removes, and lists capabilities of a user role.
+ *
+ * See references for [Roles and Capabilities](https://codex.wordpress.org/Roles_and_Capabilities) and [WP User class](https://codex.wordpress.org/Class_Reference/WP_User).
  *
  * ## EXAMPLES
  *
