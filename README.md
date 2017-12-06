@@ -1,7 +1,7 @@
 wp-cli/role-command
 ===================
 
-Manage user roles and capabilities.
+Adds, removes, lists, and resets roles and capabilities.
 
 [![Build Status](https://travis-ci.org/wp-cli/role-command.svg?branch=master)](https://travis-ci.org/wp-cli/role-command)
 
@@ -11,9 +11,48 @@ Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contr
 
 This package implements the following commands:
 
+### wp role
+
+Manages user roles, including creating new roles and resetting to defaults.
+
+~~~
+wp role
+~~~
+
+See references for [Roles and Capabilities](https://codex.wordpress.org/Roles_and_Capabilities) and [WP User class](https://codex.wordpress.org/Class_Reference/WP_User).
+
+**EXAMPLES**
+
+    # List roles.
+    $ wp role list --fields=role --format=csv
+    role
+    administrator
+    editor
+    author
+    contributor
+    subscriber
+
+    # Check to see if a role exists.
+    $ wp role exists editor
+    Success: Role with ID 'editor' exists.
+
+    # Create a new role.
+    $ wp role create approver Approver
+    Success: Role with key 'approver' created.
+
+    # Delete an existing role.
+    $ wp role delete approver
+    Success: Role with key 'approver' deleted.
+
+    # Reset existing roles to their default capabilities.
+    $ wp role reset administrator author contributor
+    Success: Reset 3/3 roles.
+
+
+
 ### wp role create
 
-Create a new role.
+Creates a new role.
 
 ~~~
 wp role create <role-key> <role-name> [--clone=<role>]
@@ -44,7 +83,7 @@ wp role create <role-key> <role-name> [--clone=<role>]
 
 ### wp role delete
 
-Delete an existing role.
+Deletes an existing role.
 
 ~~~
 wp role delete <role-key>
@@ -69,7 +108,7 @@ wp role delete <role-key>
 
 ### wp role exists
 
-Check if a role exists.
+Checks if a role exists.
 
 ~~~
 wp role exists <role-key>
@@ -92,7 +131,7 @@ Exits with return code 0 if the role exists, 1 if it does not.
 
 ### wp role list
 
-List all roles.
+Lists all roles.
 
 ~~~
 wp role list [--fields=<fields>] [--format=<format>]
@@ -139,7 +178,7 @@ There are no optional fields.
 
 ### wp role reset
 
-Reset any default role to default capabilities.
+Resets any default role to default capabilities.
 
 ~~~
 wp role reset [<role-key>...] [--all]
@@ -165,9 +204,35 @@ wp role reset [<role-key>...] [--all]
 
 
 
+### wp cap
+
+Adds, removes, and lists capabilities of a user role.
+
+~~~
+wp cap
+~~~
+
+See references for [Roles and Capabilities](https://codex.wordpress.org/Roles_and_Capabilities) and [WP User class](https://codex.wordpress.org/Class_Reference/WP_User).
+
+**EXAMPLES**
+
+    # Add 'spectate' capability to 'author' role.
+    $ wp cap add 'author' 'spectate'
+    Success: Added 1 capability to 'author' role.
+
+    # Add all caps from 'editor' role to 'author' role.
+    $ wp cap list 'editor' | xargs wp cap add 'author'
+    Success: Added 24 capabilities to 'author' role.
+
+    # Remove all caps from 'editor' role that also appear in 'author' role.
+    $ wp cap list 'author' | xargs wp cap remove 'editor'
+    Success: Removed 34 capabilities from 'editor' role.
+
+
+
 ### wp cap add
 
-Add capabilities to a given role.
+Adds capabilities to a given role.
 
 ~~~
 wp cap add <role> <cap>...
@@ -191,7 +256,7 @@ wp cap add <role> <cap>...
 
 ### wp cap list
 
-List capabilities for a given role.
+Lists capabilities for a given role.
 
 ~~~
 wp cap list <role> [--format=<format>]
@@ -229,7 +294,7 @@ wp cap list <role> [--format=<format>]
 
 ### wp cap remove
 
-Remove capabilities from a given role.
+Removes capabilities from a given role.
 
 ~~~
 wp cap remove <role> <cap>...

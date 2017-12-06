@@ -42,7 +42,7 @@ class Role_Command extends WP_CLI_Command {
 	);
 
 	/**
-	 * List all roles.
+	 * Lists all roles.
 	 *
 	 * ## OPTIONS
 	 *
@@ -101,7 +101,7 @@ class Role_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Check if a role exists.
+	 * Checks if a role exists.
 	 *
 	 * Exits with return code 0 if the role exists, 1 if it does not.
 	 *
@@ -127,7 +127,7 @@ class Role_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Create a new role.
+	 * Creates a new role.
 	 *
 	 * ## OPTIONS
 	 *
@@ -187,7 +187,7 @@ class Role_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Delete an existing role.
+	 * Deletes an existing role.
 	 *
 	 * ## OPTIONS
 	 *
@@ -226,7 +226,7 @@ class Role_Command extends WP_CLI_Command {
 	}
 
 	/**
-	 * Reset any default role to default capabilities.
+	 * Resets any default role to default capabilities.
 	 *
 	 * ## OPTIONS
 	 *

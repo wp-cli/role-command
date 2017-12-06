@@ -1,6 +1,6 @@
 {
     "name": "wp-cli/role-command",
-    "description": "Manage user roles and capabilities.",
+    "description": "Adds, removes, lists, and resets roles and capabilities.",
     "type": "wp-cli-package",
     "homepage": "https://github.com/wp-cli/role-command",
     "support": {
@@ -34,11 +34,13 @@
             "dev-master": "1.x-dev"
         },
         "commands": [
+            "role",
             "role create",
             "role delete",
             "role exists",
             "role list",
             "role reset",
+            "cap",
             "cap add",
             "cap list",
             "cap remove"
