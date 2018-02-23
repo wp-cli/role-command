@@ -16,6 +16,17 @@ Feature: Manage WordPress roles
       Success: Role with key 'reporter' created.
       """
 
+    When I run `wp role list --field=role`
+    Then STDOUT should be:
+      """
+      administrator
+      editor
+      author
+      contributor
+      subscriber
+      reporter
+      """
+
   Scenario: Resetting a role
     When I run `wp role reset author`
     Then STDOUT should be:
