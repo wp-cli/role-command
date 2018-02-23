@@ -134,13 +134,16 @@ Exits with return code 0 if the role exists, 1 if it does not.
 Lists all roles.
 
 ~~~
-wp role list [--fields=<fields>] [--format=<format>]
+wp role list [--fields=<fields>] [--field=<field>] [--format=<format>]
 ~~~
 
 **OPTIONS**
 
 	[--fields=<fields>]
 		Limit the output to specific object fields.
+
+	[--field=<field>]
+		Prints the value of a single field.
 
 	[--format=<format>]
 		Render output in a particular format.
