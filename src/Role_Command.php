@@ -49,6 +49,9 @@ class Role_Command extends WP_CLI_Command {
 	 * [--fields=<fields>]
 	 * : Limit the output to specific object fields.
 	 *
+	 * [--field=<field>]
+	 * : Prints the value of a single field.
+	 *
 	 * [--format=<format>]
 	 * : Render output in a particular format.
 	 * ---
