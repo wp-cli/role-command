@@ -45,6 +45,12 @@ class Capabilities_Command extends WP_CLI_Command {
 	 *   - count
 	 *   - yaml
 	 * ---
+	 * 
+	 * [--show-grant]
+	 * : Display all capabilites defined for role including grant
+	 * ---
+	 * default: false
+	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
@@ -60,26 +66,43 @@ class Capabilities_Command extends WP_CLI_Command {
 	 */
 	public function list_( $args, $assoc_args ) {
 		$role_obj = self::get_role( $args[0] );
+		
+		$show_grant = !empty( $assoc_args['show-grant'] );
+
+		if ( $show_grant ) {
+			array_push( $this->fields, 'grant' );
+			$capabilities = $role_obj->capabilities;
+		} 
+		else {
+			$capabilities = array_filter( $role_obj->capabilities );
+		}
+		
+		$output_caps = array();
+		foreach ( $capabilities as $cap => $grant ) {
+			$output_cap = new StdClass;
+			
+			$output_cap->name = $cap;
+			$output_cap->grant = ( $grant ) ? 'true' : 'false';
+			
+			$output_caps[] = $output_cap;
+		}
 
 		if ( 'list' === $assoc_args['format'] ) {
-			foreach ( array_keys( $role_obj->capabilities ) as $cap ) {
-				WP_CLI::line( $cap );
+			foreach ( $output_caps as $cap ) {
+				if ( $show_grant ) {
+					WP_CLI::line( implode( ',', array( $cap->name, $cap->grant ) ) );
+				} 
+				else {
+					WP_CLI::line( $cap->name );
+				}
 			}
 		}
 		else {
-			$output_caps = array();
-			foreach ( array_keys( $role_obj->capabilities ) as $cap ) {
-				$output_cap = new stdClass;
-
-				$output_cap->name = $cap;
-
-				$output_caps[] = $output_cap;
-			}
 			$formatter = new \WP_CLI\Formatter( $assoc_args, $this->fields );
 			$formatter->display_items( $output_caps );
 		}
 	}
-
+	
 	/**
 	 * Adds capabilities to a given role.
 	 *
@@ -90,6 +113,15 @@ class Capabilities_Command extends WP_CLI_Command {
 	 *
 	 * <cap>...
 	 * : One or more capabilities to add.
+	 * 
+	 * [--grant]
+	 * : Add the capability as true/false
+	 * ---
+	 * default: true
+	 * options:
+	 *   - true
+	 *   - false
+	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
@@ -97,25 +129,34 @@ class Capabilities_Command extends WP_CLI_Command {
 	 *     $ wp cap add author spectate
 	 *     Success: Added 1 capability to 'author' role.
 	 */
-	public function add( $args ) {
+	public function add( $args, $assoc_args ) {
 		self::persistence_check();
-
+		
 		$role = array_shift( $args );
 
 		$role_obj = self::get_role( $role );
 
+		$grant = !isset( $assoc_args['grant'] ) || !empty( $assoc_args['grant'] );
+		
 		$count = 0;
 
 		foreach ( $args as $cap ) {
-			if ( $role_obj->has_cap( $cap ) )
+			if ( true === $grant && $role_obj->has_cap( $cap ) )
 				continue;
 
-			$role_obj->add_cap( $cap );
+			if ( false === $grant && isset( $role_obj->capabilities[ $cap ] ) && false === $role_obj->capabilities[ $cap ] )
+				continue;
+
+			$role_obj->add_cap( $cap, $grant );
 
 			$count++;
 		}
 
-		$message = ( 1 === $count ) ? "Added %d capability to '%s' role." : "Added %d capabilities to '%s' role.";
+		if ( $grant ) {
+			$message = ( 1 === $count ) ? "Added %d capability to '%s' role." : "Added %d capabilities to '%s' role.";
+		} else {
+			$message = ( 1 === $count ) ? "Added %d capability to '%s' role as false." : "Added %d capabilities to '%s' role as false.";
+		}
 		WP_CLI::success( sprintf( $message, $count, $role ) );
 	}
 
@@ -146,7 +187,7 @@ class Capabilities_Command extends WP_CLI_Command {
 		$count = 0;
 
 		foreach ( $args as $cap ) {
-			if ( !$role_obj->has_cap( $cap ) )
+			if ( !isset( $role_obj->capabilities ) )
 				continue;
 
 			$role_obj->remove_cap( $cap );

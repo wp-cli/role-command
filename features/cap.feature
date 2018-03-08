@@ -26,6 +26,18 @@ Feature: Manage Cap
       Success: Added 2 capabilities to 'contributor' role.
       """
 
+    When I run `wp cap add contributor detect --no-grant`
+    Then STDOUT should contain:
+      """
+      Success: Added 1 capability to 'contributor' role as false.
+      """
+
+    When I run `wp cap add contributor discover examine --no-grant`
+    Then STDOUT should contain:
+      """
+      Success: Added 2 capabilities to 'contributor' role as false.
+      """
+
     When I run `wp cap list contributor`
     Then STDOUT should contain:
       """
@@ -38,6 +50,44 @@ Feature: Manage Cap
     And STDOUT should contain:
       """
       observe
+      """
+    Then STDOUT should not contain:
+      """
+      detect
+      """
+    Then STDOUT should not contain:
+      """
+      discover
+      """
+    Then STDOUT should not contain:
+      """
+      examine
+      """
+
+    When I run `wp cap list contributor --show-grant`
+    Then STDOUT should contain:
+      """
+      spectate,true
+      """
+    And STDOUT should contain:
+      """
+      behold,true
+      """
+    And STDOUT should contain:
+      """
+      observe,true
+      """
+    Then STDOUT should contain:
+      """
+      detect,false
+      """
+    Then STDOUT should contain:
+      """
+      discover,false
+      """
+    Then STDOUT should contain:
+      """
+      examine,false
       """
 
     When I run `wp cap remove contributor spectate`
@@ -52,6 +102,12 @@ Feature: Manage Cap
       Success: Removed 2 capabilities from 'contributor' role.
       """
 
+    When I run `wp cap remove contributor detect discover examine`
+    Then STDOUT should contain:
+      """
+      Success: Removed 3 capabilities from 'contributor' role.
+      """
+
     When I run `wp cap list contributor`
     Then STDOUT should not contain:
       """
@@ -64,6 +120,32 @@ Feature: Manage Cap
     And STDOUT should not contain:
       """
       observe
+      """
+
+    When I run `wp cap list contributor --show-grant`
+    Then STDOUT should not contain:
+      """
+      spectate,true
+      """
+    And STDOUT should not contain:
+      """
+      behold,true
+      """
+    And STDOUT should not contain:
+      """
+      observe,true
+      """
+    Then STDOUT should not contain:
+      """
+      detect,false
+      """
+    And STDOUT should not contain:
+      """
+      discover,false
+      """
+    And STDOUT should not contain:
+      """
+      examine,false
       """
 
     When I try `wp cap add role-not-available spectate`
