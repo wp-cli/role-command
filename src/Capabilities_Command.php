@@ -187,7 +187,7 @@ class Capabilities_Command extends WP_CLI_Command {
 		$count = 0;
 
 		foreach ( $args as $cap ) {
-			if ( !isset( $role_obj->capabilities ) )
+			if ( !isset( $role_obj->capabilities[ $cap ] ) )
 				continue;
 
 			$role_obj->remove_cap( $cap );
