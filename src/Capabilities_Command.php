@@ -47,7 +47,7 @@ class Capabilities_Command extends WP_CLI_Command {
 	 * ---
 	 * 
 	 * [--show-grant]
-	 * : Display all capabilites defined for role including grant
+	 * : Display all capabilities defined for a role including grant.
 	 * ---
 	 * default: false
 	 * ---
@@ -67,7 +67,7 @@ class Capabilities_Command extends WP_CLI_Command {
 	public function list_( $args, $assoc_args ) {
 		$role_obj = self::get_role( $args[0] );
 		
-		$show_grant = !empty( $assoc_args['show-grant'] );
+		$show_grant = ! empty( $assoc_args['show-grant'] );
 
 		if ( $show_grant ) {
 			array_push( $this->fields, 'grant' );
@@ -102,7 +102,7 @@ class Capabilities_Command extends WP_CLI_Command {
 			$formatter->display_items( $output_caps );
 		}
 	}
-	
+
 	/**
 	 * Adds capabilities to a given role.
 	 *
@@ -115,7 +115,7 @@ class Capabilities_Command extends WP_CLI_Command {
 	 * : One or more capabilities to add.
 	 * 
 	 * [--grant]
-	 * : Add the capability as true/false
+	 * : Adds the capability as an explicit boolean value, instead of implicitly defaulting to `true`.
 	 * ---
 	 * default: true
 	 * options:
@@ -131,13 +131,13 @@ class Capabilities_Command extends WP_CLI_Command {
 	 */
 	public function add( $args, $assoc_args ) {
 		self::persistence_check();
-		
+
 		$role = array_shift( $args );
 
 		$role_obj = self::get_role( $role );
 
-		$grant = !isset( $assoc_args['grant'] ) || !empty( $assoc_args['grant'] );
-		
+		$grant = ! isset( $assoc_args['grant'] ) || ! empty( $assoc_args['grant'] );
+
 		$count = 0;
 
 		foreach ( $args as $cap ) {
@@ -187,7 +187,7 @@ class Capabilities_Command extends WP_CLI_Command {
 		$count = 0;
 
 		foreach ( $args as $cap ) {
-			if ( !isset( $role_obj->capabilities[ $cap ] ) )
+			if ( ! isset( $role_obj->capabilities[ $cap ] ) )
 				continue;
 
 			$role_obj->remove_cap( $cap );
