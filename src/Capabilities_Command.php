@@ -80,7 +80,7 @@ class Capabilities_Command extends WP_CLI_Command {
 		$output_caps = array();
 		foreach ( $capabilities as $cap => $grant ) {
 			$output_cap = new StdClass;
-			
+
 			$output_cap->name = $cap;
 			$output_cap->grant = ( $grant ) ? 'true' : 'false';
 			
