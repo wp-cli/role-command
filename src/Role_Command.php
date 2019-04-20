@@ -1,5 +1,8 @@
 <?php
 
+use WP_CLI\Utils;
+use WP_CLI\Formatter;
+
 /**
  * Manages user roles, including creating new roles and resetting to defaults.
  *
@@ -36,10 +39,10 @@
  */
 class Role_Command extends WP_CLI_Command {
 
-	private $fields = array(
-		'name',
-		'role'
-	);
+	private $fields = [ 'name', 'role' ];
+
+	// Array of default roles.
+	private $roles = [ 'administrator', 'editor', 'author', 'contributor', 'subscriber' ];
 
 	/**
 	 * Lists all roles.
@@ -91,7 +94,7 @@ class Role_Command extends WP_CLI_Command {
 
 		$output_roles = array();
 		foreach ( $wp_roles->roles as $key => $role ) {
-			$output_role = new stdClass;
+			$output_role = new stdClass();
 
 			$output_role->name = $role['name'];
 			$output_role->role = $key;
@@ -99,7 +102,7 @@ class Role_Command extends WP_CLI_Command {
 			$output_roles[] = $output_role;
 		}
 
-		$formatter = new \WP_CLI\Formatter( $assoc_args, $this->fields );
+		$formatter = new Formatter( $assoc_args, $this->fields );
 		$formatter->display_items( $output_roles );
 	}
 
@@ -122,11 +125,11 @@ class Role_Command extends WP_CLI_Command {
 	public function exists( $args ) {
 		global $wp_roles;
 
-		if ( ! in_array($args[0], array_keys( $wp_roles->roles ) ) ) {
-			WP_CLI::error( "Role with ID '$args[0]' does not exist." );
+		if ( ! in_array( $args[0], array_keys( $wp_roles->roles ), true ) ) {
+			WP_CLI::error( "Role with ID '{$args[0]}' does not exist." );
 		}
 
-		WP_CLI::success( "Role with ID '$args[0]' exists." );
+		WP_CLI::success( "Role with ID '{$args[0]}' exists." );
 	}
 
 	/**
@@ -158,11 +161,11 @@ class Role_Command extends WP_CLI_Command {
 
 		self::persistence_check();
 
-		$role_key = array_shift( $args );
+		$role_key  = array_shift( $args );
 		$role_name = array_shift( $args );
 
 		if ( empty( $role_key ) || empty( $role_name ) ) {
-			WP_CLI::error( "Can't create role, insufficient information provided.");
+			WP_CLI::error( "Can't create role, insufficient information provided." );
 		}
 
 		$capabilities = false;
@@ -177,7 +180,7 @@ class Role_Command extends WP_CLI_Command {
 		if ( add_role( $role_key, $role_name ) ) {
 			if ( ! empty( $capabilities ) ) {
 				$role_obj = $wp_roles->get_role( $role_key );
-				foreach( $capabilities as $cap ) {
+				foreach ( $capabilities as $cap ) {
 					$role_obj->add_cap( $cap );
 				}
 				WP_CLI::success( sprintf( "Role with key '%s' created. Cloned capabilities from '%s'.", $role_key, $assoc_args['clone'] ) );
@@ -214,17 +217,19 @@ class Role_Command extends WP_CLI_Command {
 
 		$role_key = array_shift( $args );
 
-		if ( empty( $role_key ) || ! isset( $wp_roles->roles[$role_key] ) )
-			WP_CLI::error( "Role key not provided, or is invalid." );
+		if ( empty( $role_key ) || ! isset( $wp_roles->roles[ $role_key ] ) ) {
+			WP_CLI::error( 'Role key not provided, or is invalid.' );
+		}
 
 		remove_role( $role_key );
 
 		// Note: remove_role() doesn't indicate success or otherwise, so we have to
 		// check ourselves
-		if ( ! isset( $wp_roles->roles[$role_key] ) )
+		if ( ! isset( $wp_roles->roles[ $role_key ] ) ) {
 			WP_CLI::success( sprintf( "Role with key '%s' deleted.", $role_key ) );
-		else
+		} else {
 			WP_CLI::error( sprintf( "Role with key '%s' could not be deleted.", $role_key ) );
+		}
 
 	}
 
@@ -253,26 +258,28 @@ class Role_Command extends WP_CLI_Command {
 
 		self::persistence_check();
 
-		if ( ! \WP_CLI\Utils\get_flag_value( $assoc_args, 'all' ) && empty( $args ) )
-			WP_CLI::error( "Role key not provided, or is invalid." );
+		if ( ! Utils\get_flag_value( $assoc_args, 'all' ) && empty( $args ) ) {
+			WP_CLI::error( 'Role key not provided, or is invalid.' );
+		}
 
 		if ( ! function_exists( 'populate_roles' ) ) {
-			require_once( ABSPATH.'wp-admin/includes/schema.php' );
+			require_once ABSPATH . 'wp-admin/includes/schema.php';
 		}
 
 		global $wp_roles;
-		$all_roles = array_keys( $wp_roles->roles );
+		$all_roles     = array_keys( $wp_roles->roles );
 		$preserve_args = $args;
 
 		// Get our default roles.
-		$default_roles = $preserve = array( 'administrator', 'editor', 'author', 'contributor', 'subscriber' );
-		$before = array();
+		$default_roles = $this->roles;
+		$preserve      = $this->roles;
+		$before        = [];
 
-		if ( \WP_CLI\Utils\get_flag_value( $assoc_args, 'all' ) ) {
-			foreach( $default_roles as $role ) {
+		if ( Utils\get_flag_value( $assoc_args, 'all' ) ) {
+			foreach ( $default_roles as $role ) {
 				$before[ $role ] = get_role( $role );
 				remove_role( $role );
-				$args[]= $role;
+				$args[] = $role;
 			}
 			populate_roles();
 			$not_affected_roles = array_diff( $all_roles, $default_roles );
@@ -284,7 +291,7 @@ class Role_Command extends WP_CLI_Command {
 		} else {
 
 			foreach ( $args as $k => $role_key ) {
-				$key = array_search( $role_key, $default_roles );
+				$key = array_search( $role_key, $default_roles, true );
 				if ( false !== $key ) {
 					unset( $preserve[ $key ] );
 					$before[ $role_key ] = get_role( $role_key );
@@ -302,7 +309,7 @@ class Role_Command extends WP_CLI_Command {
 			}
 
 			// No roles were unset, bail.
-			if ( count( $default_roles ) == count( $preserve ) ) {
+			if ( count( $default_roles ) === count( $preserve ) ) {
 				WP_CLI::error( 'Must specify a default role to reset.' );
 			}
 
@@ -312,7 +319,7 @@ class Role_Command extends WP_CLI_Command {
 				 * if get_role is null
 				 * save role name for re-removal
 				 */
-				$roleobj = get_role( $role );
+				$roleobj        = get_role( $role );
 				$preserve[ $k ] = is_null( $roleobj ) ? $role : $roleobj;
 
 				remove_role( $role );
@@ -334,21 +341,22 @@ class Role_Command extends WP_CLI_Command {
 			}
 		}
 
-		$num_reset = 0;
-		$args = array_unique( $args );
+		$num_reset    = 0;
+		$args         = array_unique( $args );
 		$num_to_reset = count( $args );
-		foreach( $args as $role_key ) {
+		foreach ( $args as $role_key ) {
 			$after[ $role_key ] = get_role( $role_key );
 
+			// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison -- Object instances won't be same, strict check will fail here.
 			if ( $after[ $role_key ] != $before[ $role_key ] ) {
 				++$num_reset;
-				$restored_cap = array_diff_key( $after[ $role_key ]->capabilities, $before[ $role_key ]->capabilities );
-				$removed_cap = array_diff_key( $before[ $role_key ]->capabilities, $after[ $role_key ]->capabilities );
+				$restored_cap       = array_diff_key( $after[ $role_key ]->capabilities, $before[ $role_key ]->capabilities );
+				$removed_cap        = array_diff_key( $before[ $role_key ]->capabilities, $after[ $role_key ]->capabilities );
 				$restored_cap_count = count( $restored_cap );
-				$removed_cap_count = count( $removed_cap );
-				$restored_text = ( 1 === $restored_cap_count ) ? '%d capability' : '%d capabilities';
-				$removed_text = ( 1 === $removed_cap_count ) ? '%d capability' : '%d capabilities';
-				$message = "Restored ". $restored_text . " to and removed " . $removed_text . " from '%s' role.";
+				$removed_cap_count  = count( $removed_cap );
+				$restored_text      = ( 1 === $restored_cap_count ) ? '%d capability' : '%d capabilities';
+				$removed_text       = ( 1 === $removed_cap_count ) ? '%d capability' : '%d capabilities';
+				$message            = "Restored {$restored_text} to and removed {$removed_text} from '%s' role.";
 				WP_CLI::log( sprintf( $message, $restored_cap_count, $removed_cap_count, $role_key ) );
 			} else {
 				WP_CLI::log( "No changes necessary for '{$role_key}' role." );
@@ -372,7 +380,8 @@ class Role_Command extends WP_CLI_Command {
 	private static function persistence_check() {
 		global $wp_roles;
 
-		if ( !$wp_roles->use_db )
-			WP_CLI::error( "Role definitions are not persistent." );
+		if ( ! $wp_roles->use_db ) {
+			WP_CLI::error( 'Role definitions are not persistent.' );
+		}
 	}
 }

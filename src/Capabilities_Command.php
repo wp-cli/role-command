@@ -1,5 +1,7 @@
 <?php
 
+use WP_CLI\Formatter;
+
 /**
  * Adds, removes, and lists capabilities of a user role.
  *
@@ -21,9 +23,7 @@
  */
 class Capabilities_Command extends WP_CLI_Command {
 
-	private $fields = array(
-		'name'
-	);
+	private $fields = [ 'name' ];
 
 	/**
 	 * Lists capabilities for a given role.
@@ -45,7 +45,7 @@ class Capabilities_Command extends WP_CLI_Command {
 	 *   - count
 	 *   - yaml
 	 * ---
-	 * 
+	 *
 	 * [--show-grant]
 	 * : Display all capabilities defined for a role including grant.
 	 * ---
@@ -66,24 +66,23 @@ class Capabilities_Command extends WP_CLI_Command {
 	 */
 	public function list_( $args, $assoc_args ) {
 		$role_obj = self::get_role( $args[0] );
-		
+
 		$show_grant = ! empty( $assoc_args['show-grant'] );
 
 		if ( $show_grant ) {
 			array_push( $this->fields, 'grant' );
 			$capabilities = $role_obj->capabilities;
-		} 
-		else {
+		} else {
 			$capabilities = array_filter( $role_obj->capabilities );
 		}
-		
+
 		$output_caps = array();
 		foreach ( $capabilities as $cap => $grant ) {
-			$output_cap = new StdClass;
+			$output_cap = new stdClass();
 
-			$output_cap->name = $cap;
+			$output_cap->name  = $cap;
 			$output_cap->grant = ( $grant ) ? 'true' : 'false';
-			
+
 			$output_caps[] = $output_cap;
 		}
 
@@ -91,14 +90,12 @@ class Capabilities_Command extends WP_CLI_Command {
 			foreach ( $output_caps as $cap ) {
 				if ( $show_grant ) {
 					WP_CLI::line( implode( ',', array( $cap->name, $cap->grant ) ) );
-				} 
-				else {
+				} else {
 					WP_CLI::line( $cap->name );
 				}
 			}
-		}
-		else {
-			$formatter = new \WP_CLI\Formatter( $assoc_args, $this->fields );
+		} else {
+			$formatter = new Formatter( $assoc_args, $this->fields );
 			$formatter->display_items( $output_caps );
 		}
 	}
@@ -113,7 +110,7 @@ class Capabilities_Command extends WP_CLI_Command {
 	 *
 	 * <cap>...
 	 * : One or more capabilities to add.
-	 * 
+	 *
 	 * [--grant]
 	 * : Adds the capability as an explicit boolean value, instead of implicitly defaulting to `true`.
 	 * ---
@@ -141,11 +138,13 @@ class Capabilities_Command extends WP_CLI_Command {
 		$count = 0;
 
 		foreach ( $args as $cap ) {
-			if ( true === $grant && $role_obj->has_cap( $cap ) )
+			if ( true === $grant && $role_obj->has_cap( $cap ) ) {
 				continue;
+			}
 
-			if ( false === $grant && isset( $role_obj->capabilities[ $cap ] ) && false === $role_obj->capabilities[ $cap ] )
+			if ( false === $grant && isset( $role_obj->capabilities[ $cap ] ) && false === $role_obj->capabilities[ $cap ] ) {
 				continue;
+			}
 
 			$role_obj->add_cap( $cap, $grant );
 
@@ -187,8 +186,9 @@ class Capabilities_Command extends WP_CLI_Command {
 		$count = 0;
 
 		foreach ( $args as $cap ) {
-			if ( ! isset( $role_obj->capabilities[ $cap ] ) )
+			if ( ! isset( $role_obj->capabilities[ $cap ] ) ) {
 				continue;
+			}
 
 			$role_obj->remove_cap( $cap );
 
@@ -204,8 +204,9 @@ class Capabilities_Command extends WP_CLI_Command {
 
 		$role_obj = $wp_roles->get_role( $role );
 
-		if ( !$role_obj )
-			WP_CLI::error( "'$role' role not found." );
+		if ( ! $role_obj ) {
+			WP_CLI::error( "'{$role}' role not found." );
+		}
 
 		return $role_obj;
 	}
@@ -213,7 +214,8 @@ class Capabilities_Command extends WP_CLI_Command {
 	private static function persistence_check() {
 		global $wp_roles;
 
-		if ( !$wp_roles->use_db )
-			WP_CLI::error( "Role definitions are not persistent." );
+		if ( ! $wp_roles->use_db ) {
+			WP_CLI::error( 'Role definitions are not persistent.' );
+		}
 	}
 }
