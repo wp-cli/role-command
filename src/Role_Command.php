@@ -40,14 +40,14 @@ use WP_CLI\Formatter;
 class Role_Command extends WP_CLI_Command {
 
 	/**
-	 * Available fields.
+	 * List of available fields.
 	 *
 	 * @var array
 	 */
 	private $fields = [ 'name', 'role' ];
 
 	/**
-	 * Default roles ad provided by WordPress Core.
+	 * Default roles as provided by WordPress Core.
 	 *
 	 * @var array
 	 */
