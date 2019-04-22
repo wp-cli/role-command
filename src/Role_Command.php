@@ -192,9 +192,9 @@ class Role_Command extends WP_CLI_Command {
 				foreach ( $capabilities as $cap ) {
 					$role_obj->add_cap( $cap );
 				}
-				WP_CLI::success( sprintf( "Role with key '%s' created. Cloned capabilities from '%s'.", $role_key, $assoc_args['clone'] ) );
+				WP_CLI::success( "Role with key '{$role_key}' created. Cloned capabilities from '{$assoc_args['clone']}'." );
 			} else {
-				WP_CLI::success( sprintf( "Role with key '%s' created.", $role_key ) );
+				WP_CLI::success( "Role with key '{$role_key}' created." );
 			}
 		} else {
 			WP_CLI::error( "Role couldn't be created." );
@@ -235,9 +235,9 @@ class Role_Command extends WP_CLI_Command {
 		// Note: remove_role() doesn't indicate success or otherwise, so we have to
 		// check ourselves
 		if ( ! isset( $wp_roles->roles[ $role_key ] ) ) {
-			WP_CLI::success( sprintf( "Role with key '%s' deleted.", $role_key ) );
+			WP_CLI::success( "Role with key '{$role_key}' deleted." );
 		} else {
-			WP_CLI::error( sprintf( "Role with key '%s' could not be deleted.", $role_key ) );
+			WP_CLI::error( "Role with key '{$role_key}' could not be deleted." );
 		}
 
 	}
