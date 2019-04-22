@@ -86,7 +86,7 @@ class Capabilities_Command extends WP_CLI_Command {
 			$output_cap = new stdClass();
 
 			$output_cap->name  = $cap;
-			$output_cap->grant = ( $grant ) ? 'true' : 'false';
+			$output_cap->grant = $grant ? 'true' : 'false';
 
 			$output_caps[] = $output_cap;
 		}
@@ -156,12 +156,10 @@ class Capabilities_Command extends WP_CLI_Command {
 			$count++;
 		}
 
-		if ( $grant ) {
-			$message = ( 1 === $count ) ? "Added %d capability to '%s' role." : "Added %d capabilities to '%s' role.";
-		} else {
-			$message = ( 1 === $count ) ? "Added %d capability to '%s' role as false." : "Added %d capabilities to '%s' role as false.";
-		}
-		WP_CLI::success( sprintf( $message, $count, $role ) );
+		$capability          = WP_CLI\Utils\pluralize( 'capability', $count );
+		$grant_qualification = $grant ? '' : ' as false';
+
+		WP_CLI::success( "Added {$count} {$capability} to '{$role}' role{$grant_qualification}." );
 	}
 
 	/**
@@ -200,8 +198,9 @@ class Capabilities_Command extends WP_CLI_Command {
 			$count++;
 		}
 
-		$message = ( 1 === $count ) ? "Removed %d capability from '%s' role." : "Removed %d capabilities from '%s' role.";
-		WP_CLI::success( sprintf( $message, $count, $role ) );
+		$capability = WP_CLI\Utils\pluralize( 'capability', $count );
+
+		WP_CLI::success( "Removed {$count} {$capability} from '{$role}' role." );
 	}
 
 	/**
