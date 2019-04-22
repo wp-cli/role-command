@@ -23,6 +23,11 @@ use WP_CLI\Formatter;
  */
 class Capabilities_Command extends WP_CLI_Command {
 
+	/**
+	 * List of available fields.
+	 *
+	 * @var array
+	 */
 	private $fields = [ 'name' ];
 
 	/**
@@ -199,6 +204,13 @@ class Capabilities_Command extends WP_CLI_Command {
 		WP_CLI::success( sprintf( $message, $count, $role ) );
 	}
 
+	/**
+	 * Retrieve a specific role from the system.
+	 *
+	 * @param string $role Role to retrieve.
+	 * @return WP_Role Requested role.
+	 * @throws \WP_CLI\ExitException If the role could not be found.
+	 */
 	private static function get_role( $role ) {
 		global $wp_roles;
 
@@ -211,6 +223,12 @@ class Capabilities_Command extends WP_CLI_Command {
 		return $role_obj;
 	}
 
+	/**
+	 * Assert that the roles are persisted to the database.
+	 *
+	 * @throws \WP_CLI\ExitException If the roles are not persisted to the
+	 *                               database.
+	 */
 	private static function persistence_check() {
 		global $wp_roles;
 

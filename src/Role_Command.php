@@ -39,9 +39,18 @@ use WP_CLI\Formatter;
  */
 class Role_Command extends WP_CLI_Command {
 
+	/**
+	 * Available fields.
+	 *
+	 * @var array
+	 */
 	private $fields = [ 'name', 'role' ];
 
-	// Array of default roles.
+	/**
+	 * Default roles ad provided by WordPress Core.
+	 *
+	 * @var array
+	 */
 	private $roles = [ 'administrator', 'editor', 'author', 'contributor', 'subscriber' ];
 
 	/**
@@ -377,6 +386,12 @@ class Role_Command extends WP_CLI_Command {
 		}
 	}
 
+	/**
+	 * Assert that the roles are persisted to the database.
+	 *
+	 * @throws \WP_CLI\ExitException If the roles are not persisted to the
+	 *                               database.
+	 */
 	private static function persistence_check() {
 		global $wp_roles;
 
