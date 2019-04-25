@@ -134,13 +134,16 @@ Exits with return code 0 if the role exists, 1 if it does not.
 Lists all roles.
 
 ~~~
-wp role list [--fields=<fields>] [--format=<format>]
+wp role list [--fields=<fields>] [--field=<field>] [--format=<format>]
 ~~~
 
 **OPTIONS**
 
 	[--fields=<fields>]
 		Limit the output to specific object fields.
+
+	[--field=<field>]
+		Prints the value of a single field.
 
 	[--format=<format>]
 		Render output in a particular format.
@@ -235,7 +238,7 @@ See references for [Roles and Capabilities](https://codex.wordpress.org/Roles_an
 Adds capabilities to a given role.
 
 ~~~
-wp cap add <role> <cap>...
+wp cap add <role> <cap>... [--grant]
 ~~~
 
 **OPTIONS**
@@ -245,6 +248,15 @@ wp cap add <role> <cap>...
 
 	<cap>...
 		One or more capabilities to add.
+
+	[--grant]
+		Adds the capability as an explicit boolean value, instead of implicitly defaulting to `true`.
+		---
+		default: true
+		options:
+		  - true
+		  - false
+		---
 
 **EXAMPLES**
 
@@ -259,7 +271,7 @@ wp cap add <role> <cap>...
 Lists capabilities for a given role.
 
 ~~~
-wp cap list <role> [--format=<format>]
+wp cap list <role> [--format=<format>] [--show-grant]
 ~~~
 
 **OPTIONS**
@@ -278,6 +290,12 @@ wp cap list <role> [--format=<format>]
 		  - json
 		  - count
 		  - yaml
+		---
+
+	[--show-grant]
+		Display all capabilities defined for a role including grant.
+		---
+		default: false
 		---
 
 **EXAMPLES**
