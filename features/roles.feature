@@ -111,6 +111,37 @@ Feature: Manage WordPress roles
       Success: Role reset.
       """
 
+  Scenario: Resetting an already-deleted role
+    Given a WP install
+
+    When I run `wp role delete editor`
+    Then STDOUT should be:
+      """
+      Success: Role with key 'editor' deleted.
+      """
+
+    When I try `wp role exists editor`
+    Then STDERR should be:
+      """
+      Error: Role with ID 'editor' does not exist.
+      """
+
+    When I run `wp role reset editor`
+    Then STDOUT should contain:
+      """
+      removed 0 capabilities from 'editor' role.
+      """
+    And STDOUT should contain:
+      """
+      Success: Role reset.
+      """
+
+    When I run `wp role exists editor`
+    Then STDOUT should be:
+      """
+      Success: Role with ID 'editor' exists.
+      """
+
   Scenario: Cloning a role
     When I try `wp role create reporter Reporter --clone=no-role`
     Then STDERR should be:

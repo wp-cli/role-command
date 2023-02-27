@@ -359,13 +359,14 @@ class Role_Command extends WP_CLI_Command {
 			// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison -- Object instances won't be same, strict check will fail here.
 			if ( $after[ $role_key ] != $before[ $role_key ] ) {
 				++$num_reset;
-				$restored_cap       = array_diff_key( $after[ $role_key ]->capabilities, $before[ $role_key ]->capabilities );
-				$removed_cap        = array_diff_key( $before[ $role_key ]->capabilities, $after[ $role_key ]->capabilities );
-				$restored_cap_count = count( $restored_cap );
-				$removed_cap_count  = count( $removed_cap );
-				$restored_text      = ( 1 === $restored_cap_count ) ? '%d capability' : '%d capabilities';
-				$removed_text       = ( 1 === $removed_cap_count ) ? '%d capability' : '%d capabilities';
-				$message            = "Restored {$restored_text} to and removed {$removed_text} from '%s' role.";
+				$before_capabilities = isset( $before[ $role_key ] ) ? $before[ $role_key ]->capabilities : [];
+				$restored_cap        = array_diff_key( $after[ $role_key ]->capabilities, $before_capabilities );
+				$removed_cap         = array_diff_key( $before_capabilities, $after[ $role_key ]->capabilities );
+				$restored_cap_count  = count( $restored_cap );
+				$removed_cap_count   = count( $removed_cap );
+				$restored_text       = ( 1 === $restored_cap_count ) ? '%d capability' : '%d capabilities';
+				$removed_text        = ( 1 === $removed_cap_count ) ? '%d capability' : '%d capabilities';
+				$message             = "Restored {$restored_text} to and removed {$removed_text} from '%s' role.";
 				WP_CLI::log( sprintf( $message, $restored_cap_count, $removed_cap_count, $role_key ) );
 			} else {
 				WP_CLI::log( "No changes necessary for '{$role_key}' role." );
