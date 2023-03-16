@@ -138,7 +138,10 @@ class Capabilities_Command extends WP_CLI_Command {
 
 		$role_obj = self::get_role( $role );
 
-		$grant = ! isset( $assoc_args['grant'] ) || ! empty( $assoc_args['grant'] );
+		$grant = true;
+		if ( isset( $assoc_args['grant'] ) ) {
+			$grant = ! $assoc_args['grant'] || 'false' === $assoc_args['grant'] ? false : true;
+		}
 
 		$count = 0;
 

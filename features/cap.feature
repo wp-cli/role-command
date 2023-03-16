@@ -20,7 +20,7 @@ Feature: Manage Cap
       Success: Added 1 capability to 'contributor' role.
       """
 
-    When I run `wp cap add contributor behold observe`
+    When I run `wp cap add contributor behold observe --grant`
     Then STDOUT should contain:
       """
       Success: Added 2 capabilities to 'contributor' role.
@@ -36,6 +36,12 @@ Feature: Manage Cap
     Then STDOUT should contain:
       """
       Success: Added 2 capabilities to 'contributor' role as false.
+      """
+
+    When I run `wp cap add contributor inspire --grant=false`
+    Then STDOUT should contain:
+      """
+      Success: Added 1 capability to 'contributor' role as false.
       """
 
     When I run `wp cap list contributor`
