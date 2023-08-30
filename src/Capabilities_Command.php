@@ -156,7 +156,7 @@ class Capabilities_Command extends WP_CLI_Command {
 
 			$role_obj->add_cap( $cap, $grant );
 
-			$count++;
+			++$count;
 		}
 
 		$capability          = WP_CLI\Utils\pluralize( 'capability', $count );
@@ -198,7 +198,7 @@ class Capabilities_Command extends WP_CLI_Command {
 
 			$role_obj->remove_cap( $cap );
 
-			$count++;
+			++$count;
 		}
 
 		$capability = WP_CLI\Utils\pluralize( 'capability', $count );
