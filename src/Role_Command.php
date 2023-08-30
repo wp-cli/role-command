@@ -239,7 +239,6 @@ class Role_Command extends WP_CLI_Command {
 		} else {
 			WP_CLI::error( "Role with key '{$role_key}' could not be deleted." );
 		}
-
 	}
 
 	/**
@@ -370,7 +369,7 @@ class Role_Command extends WP_CLI_Command {
 		foreach ( $args as $role_key ) {
 			$after[ $role_key ] = get_role( $role_key );
 
-			// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison -- Object instances won't be same, strict check will fail here.
+			// phpcs:ignore Universal.Operators.StrictComparisons -- Object instances won't be same, strict check will fail here.
 			if ( $after[ $role_key ] != $before[ $role_key ] ) {
 				++$num_reset;
 				$before_capabilities = isset( $before[ $role_key ] ) ? $before[ $role_key ]->capabilities : [];
@@ -392,12 +391,10 @@ class Role_Command extends WP_CLI_Command {
 			} else {
 				WP_CLI::success( "{$num_reset} of {$num_to_reset} roles reset." );
 			}
-		} else {
-			if ( 1 === count( $args ) ) {
+		} elseif ( 1 === count( $args ) ) {
 				WP_CLI::success( 'Role didn\'t need resetting.' );
-			} else {
-				WP_CLI::success( 'No roles needed resetting.' );
-			}
+		} else {
+			WP_CLI::success( 'No roles needed resetting.' );
 		}
 	}
 
