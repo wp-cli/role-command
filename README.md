@@ -101,7 +101,7 @@ wp role delete <role-key>
     Success: Role with key 'approver' deleted.
 
     # Delete productadmin role.
-    wp role delete productadmin
+    $ wp role delete productadmin
     Success: Role with key 'productadmin' deleted.
 
 
