@@ -26,7 +26,7 @@ class Capabilities_Command extends WP_CLI_Command {
 	/**
 	 * List of available fields.
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
 	private $fields = [ 'name' ];
 
