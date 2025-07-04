@@ -42,14 +42,14 @@ class Role_Command extends WP_CLI_Command {
 	/**
 	 * List of available fields.
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
 	private $fields = [ 'name', 'role' ];
 
 	/**
 	 * Default roles as provided by WordPress Core.
 	 *
-	 * @var array
+	 * @var array<string>
 	 */
 	private $roles = [ 'administrator', 'editor', 'author', 'contributor', 'subscriber' ];
 
@@ -347,13 +347,17 @@ class Role_Command extends WP_CLI_Command {
 				remove_role( $role );
 			}
 
+			/**
+			 * @var array<string|\WP_Role> $preserve
+			 */
+
 			// Put back all default roles and capabilities.
 			populate_roles();
 
 			// Restore the preserved roles.
 			foreach ( $preserve as $k => $roleobj ) {
 				// Re-remove after populating.
-				if ( is_a( $roleobj, 'WP_Role' ) ) {
+				if ( $roleobj instanceof \WP_Role ) {
 					remove_role( $roleobj->name );
 					add_role( $roleobj->name, ucwords( $roleobj->name ), $roleobj->capabilities );
 				} else {
@@ -373,13 +377,15 @@ class Role_Command extends WP_CLI_Command {
 			if ( $after[ $role_key ] != $before[ $role_key ] ) {
 				++$num_reset;
 				$before_capabilities = isset( $before[ $role_key ] ) ? $before[ $role_key ]->capabilities : [];
-				$restored_cap        = array_diff_key( $after[ $role_key ]->capabilities, $before_capabilities );
-				$removed_cap         = array_diff_key( $before_capabilities, $after[ $role_key ]->capabilities );
-				$restored_cap_count  = count( $restored_cap );
-				$removed_cap_count   = count( $removed_cap );
-				$restored_text       = ( 1 === $restored_cap_count ) ? '%d capability' : '%d capabilities';
-				$removed_text        = ( 1 === $removed_cap_count ) ? '%d capability' : '%d capabilities';
-				$message             = "Restored {$restored_text} to and removed {$removed_text} from '%s' role.";
+				// @phpstan-ignore property.nonObject
+				$restored_cap = array_diff_key( $after[ $role_key ]->capabilities, $before_capabilities );
+				// @phpstan-ignore property.nonObject
+				$removed_cap        = array_diff_key( $before_capabilities, $after[ $role_key ]->capabilities );
+				$restored_cap_count = count( $restored_cap );
+				$removed_cap_count  = count( $removed_cap );
+				$restored_text      = ( 1 === $restored_cap_count ) ? '%d capability' : '%d capabilities';
+				$removed_text       = ( 1 === $removed_cap_count ) ? '%d capability' : '%d capabilities';
+				$message            = "Restored {$restored_text} to and removed {$removed_text} from '%s' role.";
 				WP_CLI::log( sprintf( $message, $restored_cap_count, $removed_cap_count, $role_key ) );
 			} else {
 				WP_CLI::log( "No changes necessary for '{$role_key}' role." );
