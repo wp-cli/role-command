@@ -228,9 +228,6 @@ class Capabilities_Command extends WP_CLI_Command {
 
 	/**
 	 * Assert that the roles are persisted to the database.
-	 *
-	 * @throws \WP_CLI\ExitException If the roles are not persisted to the
-	 *                               database.
 	 */
 	private static function persistence_check() {
 		global $wp_roles;
