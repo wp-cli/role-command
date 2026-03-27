@@ -3,7 +3,7 @@ wp-cli/role-command
 
 Adds, removes, lists, and resets roles and capabilities.
 
-[![Testing](https://github.com/wp-cli/role-command/actions/workflows/testing.yml/badge.svg)](https://github.com/wp-cli/role-command/actions/workflows/testing.yml)
+[![Testing](https://github.com/wp-cli/role-command/actions/workflows/testing.yml/badge.svg)](https://github.com/wp-cli/role-command/actions/workflows/testing.yml) [![Code Coverage](https://codecov.io/gh/wp-cli/role-command/branch/main/graph/badge.svg)](https://codecov.io/gh/wp-cli/role-command/tree/main)
 
 Quick links: [Using](#using) | [Installing](#installing) | [Contributing](#contributing) | [Support](#support)
 
