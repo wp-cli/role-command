@@ -178,21 +178,17 @@ class Role_Command extends WP_CLI_Command {
 			WP_CLI::error( "Can't create role, insufficient information provided." );
 		}
 
-		$capabilities = false;
+		$capabilities = array();
 		if ( ! empty( $assoc_args['clone'] ) ) {
 			$role_obj = $wp_roles->get_role( $assoc_args['clone'] );
 			if ( ! $role_obj ) {
 				WP_CLI::error( "'{$assoc_args['clone']}' role not found." );
 			}
-			$capabilities = array_keys( $role_obj->capabilities );
+			$capabilities = $role_obj->capabilities;
 		}
 
-		if ( add_role( $role_key, $role_name ) ) {
+		if ( add_role( $role_key, $role_name, $capabilities ) ) {
 			if ( ! empty( $capabilities ) ) {
-				$role_obj = $wp_roles->get_role( $role_key );
-				foreach ( $capabilities as $cap ) {
-					$role_obj->add_cap( $cap );
-				}
 				WP_CLI::success( "Role with key '{$role_key}' created. Cloned capabilities from '{$assoc_args['clone']}'." );
 			} else {
 				WP_CLI::success( "Role with key '{$role_key}' created." );
