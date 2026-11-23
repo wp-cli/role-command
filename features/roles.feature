@@ -180,3 +180,25 @@ Feature: Manage WordPress roles
       """
       10
       """
+
+  Scenario: Cloning a role keeps denied capabilities denied
+    When I run `wp cap add author spectate --grant=false`
+    And I run `wp role create reporter Reporter --clone=author`
+    Then STDOUT should be:
+      """
+      Success: Role with key 'reporter' created. Cloned capabilities from 'author'.
+      """
+
+    When I run `wp cap list reporter --show-grant`
+    Then STDOUT should contain:
+      """
+      spectate,false
+      """
+    And STDOUT should not contain:
+      """
+      spectate,true
+      """
+    And STDOUT should contain:
+      """
+      upload_files,true
+      """
